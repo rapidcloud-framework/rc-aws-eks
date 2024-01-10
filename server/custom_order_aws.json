@@ -1,0 +1,10 @@
+{
+  "EKS": {
+    "eks_create_cluster": 1000,
+    "eks_create_node_group": 1001,
+    "eks_create_fargate_profile": 1002,
+    "eks_manage_addons": 1003,
+    "eks_manage_aws_auth": 1004,
+    "eks_manage_extras": 1005
+  }
+}

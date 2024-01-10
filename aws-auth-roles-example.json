@@ -1,0 +1,24 @@
+[
+  {
+    "rolearn": "arn:aws:iam::123456789:role/RoleOne",
+    "username": "user.one",
+    "groups": [
+      "some:group",
+      "some:another-group"
+    ]
+  },
+  {
+    "rolearn": "arn:aws:iam::123456789:role/RoleTwo",
+    "username": "user.two",
+    "groups": [
+      "system:masters"
+    ]
+  },
+  {
+    "rolearn": "arn:aws:iam::123456789:role/user.three",
+    "username": "user.three",
+    "groups": [
+      "system:masters"
+    ]
+  }
+]

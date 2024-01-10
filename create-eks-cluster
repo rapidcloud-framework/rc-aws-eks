@@ -1,0 +1,163 @@
+# vi: ft=sh
+# ec2
+#
+cluster_name=c002
+
+./kc eks create_cluster \
+  --cluster_name "${cluster_name}" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_eks_version "1.26" \
+  --eks_subnet_ids "mvpc02-prv01,mvpc02-prv02" \
+  --eks_endpoint_public_access "true" \
+  --eks_endpoint_public_access_cidrs "104.6.135.243/32" \
+  --eks_cluster_log_types "api,audit,authenticator,controllerManager,scheduler" \
+  --eks_cluster_log_retention_period "5" \
+  --eks_cluster_log_retention_period "3" \
+  --eks_tags "{\"app\":\"app1\"}"  \
+  --no-prompt
+
+# using files
+./kc eks manage_aws_auth \
+  --cluster_name "c002" \
+  --eks_cluster_name "c002" \
+  --eks_map_users "/Users/moti.levy/code/rapidcloud/rapid-cloud-custom-modules/rc-aws-eks/aws-auth-users-example.json" \
+  --eks_map_roles "/Users/moti.levy/code/rapidcloud/rapid-cloud-custom-modules/rc-aws-eks/aws-auth-roles-example.json" \
+  --eks_map_users_values "" \
+  --eks_map_roles_values "" \
+  --no-prompt
+
+
+./kc eks create_node_group \
+  --node_group_name "${cluster_name}_spot_01" \
+  --eks_node_group_name "${cluster_name}_spot_01" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_subnet_ids "mvpc02-prv01,mvpc02-prv02" \
+  --eks_instance_types "t3.large,t3a.large" \
+  --eks_desired_size "2" \
+  --eks_max_size "5" \
+  --eks_min_size "0" \
+  --eks_capacity_type "SPOT" \
+  --eks_volume_size "10" \
+  --eks_volume_type "gp3" \
+  --eks_force_update_version "true" \
+  --eks_tags '{"name":"spot","t2":"v2"}' \
+  --eks_labels '{"capacity":"spot","l2":"v2"}'  \
+  --no-prompt
+
+./kc eks create_node_group \
+  --node_group_name "${cluster_name}_on_demand_01" \
+  --eks_node_group_name "${cluster_name}_on_demand_01" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_subnet_ids "mvpc02-prv01,mvpc02-prv02" \
+  --eks_instance_types "t3.medium,t3a.medium" \
+  --eks_desired_size "2" \
+  --eks_max_size "5" \
+  --eks_min_size "0" \
+  --eks_capacity_type "ON_DEMAND" \
+  --eks_volume_size "10" \
+  --eks_volume_type "gp2" \
+  --eks_force_update_version "true" \
+  --eks_tags '{"name":"on_demand_01","t2":"v2"}' \
+  --eks_labels '{"capacity":"on_demand","l2":"v2"}'  \
+  --no-prompt
+
+./kc eks create_fargate_profile \
+  --profile_name "${cluster_name}_fg01" \
+  --eks_profile_name "${cluster_name}_fg01" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_namespace_1 "app1" \
+  --eks_namespace_1_labels '{"app":"app1","deploy":"true"}' \
+  --eks_namespace_2 "app2"  \
+  --eks_namespace_2_labels '{"app":"app2","deploy":"false"}' \
+  --eks_namespace_3 "" \
+  --eks_namespace_3_labels "{}" \
+  --eks_namespace_4 "" \
+  --eks_namespace_4_labels "{}" \
+  --eks_namespace_5 "" \
+  --eks_namespace_5_labels "{}" \
+  --eks_eks_version "1.25" \
+  --eks_subnet_ids "mvpc02-prv01,mvpc02-prv02" \
+  --eks_tags "{}"  \
+  --no-prompt
+
+
+./kc eks manage_addons \
+  --cluster_name "${cluster_name}" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_compute_type "ec2" \
+  --eks_eks_version "1.25" \
+  --eks_subnet_ids "" \
+  --eks_enable_aws_coredns "true" \
+  --eks_aws_coredns_version "v1.9.3-eksbuild.3" \
+  --eks_aws_coredns_replica_count "2" \
+  --eks_enable_aws_kube_proxy "true" \
+  --eks_aws_kube_proxy_version "v1.26.4-eksbuild.1" \
+  --eks_enable_aws_vpc_cni "true" \
+  --eks_aws_vpc_cni_version "v1.12.6-eksbuild.1" \
+  --eks_enable_aws_ebs_csi "true" \
+  --eks_aws_ebs_csi_version "latest"  \
+  --no-prompt
+
+./kc eks manage_aws_auth \
+  --cluster_name "c002" \
+  --eks_cluster_name "c002" \
+  --eks_map_users "/Users/moti.levy/code/rapidcloud/rapid-cloud-custom-modules/rc-aws-eks/aws-auth-users-example.json" \
+  --eks_map_roles "/Users/moti.levy/code/rapidcloud/rapid-cloud-custom-modules/rc-aws-eks/aws-auth-roles-example.json" \
+  --eks_map_users_values "" \
+  --eks_map_roles_values "" \
+  --no-prompt
+
+exit
+# using json
+./kc eks manage_aws_auth \
+  --cluster_name "${cluster_name}" \
+  --eks_cluster_name "${cluster_name}" \
+  --eks_map_users "" \
+  --eks_map_roles "" \
+  --eks_map_users_values '[
+  {
+    "rolearn": "arn:aws:iam::123456789:role/user.one",
+    "username": "user.one",
+    "groups": [
+      "some:group",
+      "some:another-group",
+      "some:yetanother-group"
+    ]
+  },
+  {
+    "rolearn": "arn:aws:iam::123456789:role/user.two",
+    "username": "user.two",
+    "groups": [
+      "system:masters"
+    ]
+  },
+  {
+    "rolearn": "arn:aws:iam::123456789:role/user.three",
+    "username": "user.three",
+    "groups": [
+      "system:masters",
+      "some:group"
+    ]
+  }
+]' \
+  --eks_map_roles_values '[
+  {
+    "rolearn": "arn:aws:iam::123456789:role/ROLE1",
+    "username": "role1",
+    "groups": [
+      "group:main",
+      "group:misc",
+      "group:others"
+    ]
+  },
+  {
+    "rolearn": "arn:aws:iam::123456789:role/ROLE2",
+    "username": "role2",
+    "groups": [
+      "system:masters",
+      "group:others"
+    ]
+  }
+]' \
+  --no-prompt
+

@@ -1,0 +1,26 @@
+[
+  {
+    "userarn": "arn:aws:iam::123456789:user/user.one",
+    "username": "user.one",
+    "groups": [
+      "group:main",
+      "group:misc",
+      "group:others"
+    ]
+  },
+  {
+    "userarn": "arn:aws:iam::123456789:user/user.two",
+    "username": "user.two",
+    "groups": [
+      "system:masters",
+      "group:others"
+    ]
+  },
+  {
+    "userarn": "arn:aws:iam::123456789:user/user.three",
+    "username": "user.three",
+    "groups": [
+      "system:masters"
+    ]
+  }
+]
